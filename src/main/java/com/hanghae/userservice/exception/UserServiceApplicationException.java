@@ -6,14 +6,18 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class UserServiceApplicationException extends RuntimeException{
+public class UserServiceApplicationException extends RuntimeException {
 
-    private final ErrorCode errorCode;
-    private final String message;
+    private ErrorCode errorCode;
+    private String message;
 
     public UserServiceApplicationException(ErrorCode errorCode) {
         this.errorCode = errorCode;
         this.message = errorCode.getMessage();
+    }
+
+    public UserServiceApplicationException() {
+
     }
 
     @Override

@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanghae.userservice.configuration.service.JwtService;
 import com.hanghae.userservice.domain.constant.ErrorCode;
 import com.hanghae.userservice.domain.constant.TokenType;
+import com.hanghae.userservice.domain.entity.EmailAuth;
 import com.hanghae.userservice.domain.entity.Token;
 import com.hanghae.userservice.domain.entity.UserAccount;
+import com.hanghae.userservice.domain.repository.EmailAuthRepository;
 import com.hanghae.userservice.domain.repository.TokenRepository;
 import com.hanghae.userservice.domain.repository.UserAccountRepository;
 import com.hanghae.userservice.dto.UserAccountDto;
@@ -21,18 +23,29 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserAccountService {
     private final UserAccountRepository userAccountRepository;
+    private final EmailAuthService emailAuthService;
+    private final EmailAuthRepository emailAuthRepository;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder encoder;
     private final TokenRepository tokenRepository;
 
     public UserAccountDto signUp(String email, String userName, String userPassword, String memo, MultipartFile profilePicture) {
+
+        EmailAuth emailAuth = emailAuthRepository.save(
+                EmailAuth.builder()
+                        .email(email)
+                        .authToken(UUID.randomUUID().toString())
+                        .expired(false)
+                        .build());
 
         userAccountRepository.findByEmail(email).ifPresent(it -> {
             throw new RuntimeException();
@@ -50,7 +63,19 @@ public class UserAccountService {
         }
         profilePictureBase64 = "/temp/img";
         UserAccount savedUser = userAccountRepository.save(UserAccount.of(email, userName, encoder.encode(userPassword), false, memo, profilePictureBase64));
+        emailAuthService.send(emailAuth.getEmail(), emailAuth.getAuthToken());
         return UserAccountDto.from(savedUser);
+    }
+
+    @Transactional // JPA에서 영속성 컨텍스트 통해 객체 변경 추적하고 트랜잭션 커밋 시점에 DB에 반영해줌.
+    public void confirmEmail(String email, String authToken) {
+        EmailAuth emailAuth = emailAuthRepository.findValidAuthByEmail(email, authToken, LocalDateTime.now())
+                .orElseThrow(UserServiceApplicationException::new);
+        UserAccount userAccount = userAccountRepository.findByEmail(email)
+                .orElseThrow(UserServiceApplicationException::new);
+        emailAuth.userToken();
+        //TODO: Setter로 대체 됨 뭘 사용할지에 대한 기준은 잘 모르겠음
+        userAccount.emailVerifiedSuccess();
     }
 
     public UserLoginResponse login(String email, String password) {
