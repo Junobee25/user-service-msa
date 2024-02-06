@@ -23,7 +23,7 @@ public class EmailAuthService {
         smm.setTo(email);
         smm.setSubject("회원가입 이메일 인증");
         String port = environment.getProperty("local.server.port");
-        String confirmationLink = String.format("http://localhost:%s/users/sign-up/confirm-email?email=%s&authToken=%s", port, email, authToken);
+        String confirmationLink = String.format("http://localhost:%s/user-service/sign-up/confirm-email?email=%s&authToken=%s", port, email, authToken);
         smm.setText(confirmationLink);
         javaMailSender.send(smm);
     }
