@@ -38,6 +38,11 @@ public class UserAccountService {
     private final BCryptPasswordEncoder encoder;
     private final TokenRepository tokenRepository;
 
+    public UserAccount loadUserByEmail(String email) throws UserServiceApplicationException {
+        return userAccountRepository.findByEmail(email).orElseThrow(
+                () -> new UserServiceApplicationException(ErrorCode.USER_NOT_FOUND, String.format("email is %s", email))
+        );
+    }
     public UserAccountDto signUp(String email, String userName, String userPassword, String memo, MultipartFile profilePicture) {
 
         EmailAuth emailAuth = emailAuthRepository.save(
