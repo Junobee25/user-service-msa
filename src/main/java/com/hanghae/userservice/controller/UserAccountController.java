@@ -63,4 +63,9 @@ public class UserAccountController {
     public Response<UserLoginResponse> modifyPassword(String currentPassword, String newPassword, Authentication authentication) {
         return Response.success(userAccountService.modifyPassword(authentication.getName(), currentPassword, newPassword));
     }
+    /// REST API
+    @GetMapping("/users/email")
+    public String getUserAccountEmail(Authentication authentication) {
+        return authentication.getName();
+    }
 }
