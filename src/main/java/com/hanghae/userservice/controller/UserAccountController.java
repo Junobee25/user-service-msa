@@ -8,15 +8,18 @@ import com.hanghae.userservice.dto.response.EmailAuthResponse;
 import com.hanghae.userservice.dto.response.Response;
 import com.hanghae.userservice.dto.response.UserLoginResponse;
 import com.hanghae.userservice.dto.response.UserSignUpResponse;
+import com.hanghae.userservice.external.service.ExternalService;
 import com.hanghae.userservice.service.UserAccountService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -55,17 +58,11 @@ public class UserAccountController {
     @PutMapping("/modify-profile")
     public void modifyProfile(UserProfileModifyRequest request, Authentication authentication) {
         //TODO: 프로필 변경시 프로필 사진은 일단 String 으로 대체한다. 후에 변경
-        log.debug(authentication + "**************************************");
         userAccountService.modifyProfile(authentication.getName(), request.userName(), request.memo(), request.profilePicture());
     }
 
     @PutMapping("/modify-password")
     public Response<UserLoginResponse> modifyPassword(String currentPassword, String newPassword, Authentication authentication) {
         return Response.success(userAccountService.modifyPassword(authentication.getName(), currentPassword, newPassword));
-    }
-    /// REST API
-    @GetMapping("/users/email")
-    public String getUserAccountEmail(Authentication authentication) {
-        return authentication.getName();
     }
 }
