@@ -13,6 +13,11 @@ public class ExternalService {
 
     private final UserAccountRepository userAccountRepository;
 
+    public Optional<Long> getUserId(String email) {
+        return userAccountRepository.findByEmail(email)
+                .map(UserAccount::getId);
+    }
+
     public Optional<Long> getFromUser(String email) {
         return userAccountRepository.findByEmail(email)
                 .map(UserAccount::getId);
