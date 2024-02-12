@@ -2,7 +2,6 @@ package com.hanghae.userservice.external.controller;
 
 import com.hanghae.userservice.dto.response.Response;
 import com.hanghae.userservice.external.service.ExternalService;
-import com.hanghae.userservice.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,6 @@ import java.util.Optional;
 @RequestMapping("/user-service")
 public class ExternalController {
 
-    private final UserAccountService userAccountService;
     private final ExternalService externalService;
 
     /// REST API
