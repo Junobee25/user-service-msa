@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -61,5 +62,10 @@ public class UserAccountController {
     @PutMapping("/modify-password")
     public Response<UserLoginResponse> modifyPassword(String currentPassword, String newPassword, Authentication authentication) {
         return Response.success(userAccountService.modifyPassword(authentication.getName(), currentPassword, newPassword));
+    }
+
+    @GetMapping("/users")
+    public List<String> findAllUser() {
+        return userAccountService.allUserEmail();
     }
 }

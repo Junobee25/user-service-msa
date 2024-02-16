@@ -13,6 +13,7 @@ public class Token {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Getter
     private String accessToken;
 
     @Enumerated(EnumType.STRING)
