@@ -8,7 +8,7 @@ logging:
   level:
     com.hanghae.userservice: debug
     org.springframework.web.servlet: debug
-    org.springframework.transaction.interceptor: trace
+#    org.springframework.transaction.interceptor: trace
     org.hibernate.type.descriptor.sql: trace
 
 spring:

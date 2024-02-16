@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -170,5 +171,11 @@ public class UserAccountService {
                 .email(email)
                 .build();
         tokenRepository.save(token);
+    }
+
+    public List<String> allUserEmail() {
+        return userAccountRepository.findAll().stream()
+                .map(UserAccount::getEmail)
+                .collect(Collectors.toList());
     }
 }

@@ -20,7 +20,10 @@ public class TokenRepositoryCustomImpl implements TokenRepositoryCustom{
     public List<Token> findAllValidTokenByEmail(String email) {
         return jpaQueryFactory
                 .selectFrom(QToken.token)
-                .where(QToken.token.email.eq(email))
+                .where(
+                        QToken.token.email.eq(email)
+                                .and(QToken.token.expired.eq(false))
+                                .and(QToken.token.revoked.eq(false)))
                 .fetch();
     }
 }
